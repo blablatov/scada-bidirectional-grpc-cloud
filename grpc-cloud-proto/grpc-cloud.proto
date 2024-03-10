@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+//import "google/protobuf/wrappers.proto";
+
+option go_package = "./"; //dir of create proto-file
+//option go_package = "./;cloudservice"; //dir of create proto-file
+
+package cloudservice;
+
+service CloudExchange {
+    rpc processCloud(stream RequestIO) returns (stream StatusIO);
+}
+
+message RequestIO {
+    string id = 1;
+    repeated string sensors = 2;
+    string description = 3;
+    double measurement = 4;
+    string destination = 5;
+	string sensor = 6;
+}
+
+message StatusIO {
+    string id = 1;
+    string status = 2;
+    repeated RequestIO IOList = 3;
+}
+
+// Номера и имена зарезервированных полей сообщений. Don't use this
+message Res {
+  reserved 7, 8, 9 to 16, 99 to max;
+  reserved "amount", "items", "ordersList", "price";
+}
