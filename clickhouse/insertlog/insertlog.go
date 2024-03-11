@@ -26,15 +26,9 @@ type InsData struct {
 	Measurement float64
 }
 
-// Файл сертификата. Структура тестового запроса. For test
+// Файл сертификата
 var (
-	s         = "108"
-	f         = "44,5"
-	sid       = fmt.Sprint(103)
-	fm        = strconv.FormatFloat(49.7, 'g', -1, 64)
-	fs        = strings.ReplaceAll(fm, ".", ",")
-	crtFile   = filepath.Join("..", "certs", "YandexInternalRootCA.crt")
-	insertLog = `INSERT INTO grpcdb.grpc_log (id, sensor, description, destination, measurement, timestamp) VALUES (` + sid + `, 'Dallas", "Texas Instruments', 'sensor#99', 'Surgut, City', ` + fs + `)`
+	crtFile = filepath.Join("..", "certs", "YandexInternalRootCA.crt")
 )
 
 func (d *InsData) InsertLog(wg sync.WaitGroup, chs chan string, chm chan float64, chi chan bool) error {

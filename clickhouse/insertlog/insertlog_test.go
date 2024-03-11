@@ -1,4 +1,5 @@
-// Вставка данных лога через SQL запрос.
+// Вставка данных лога через SQL запрос
+// go test -v .
 
 package insertlog
 
@@ -9,8 +10,18 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
+)
+
+// Структура тестового запроса. For test
+var (
+	sid       = fmt.Sprint(103)
+	fm        = strconv.FormatFloat(49.7, 'g', -1, 64)
+	fs        = strings.ReplaceAll(fm, ".", ",")
+	insertLog = `INSERT INTO grpcdb.grpc_log (id, sensor, description, destination, measurement, timestamp) VALUES (` + sid + `, 'Dallas", "Texas Instruments', 'sensor#99', 'Surgut, City', ` + fs + `)`
 )
 
 func TestInsertLog(t *testing.T) {

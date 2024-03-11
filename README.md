@@ -11,7 +11,7 @@
 
 
 ### Описание. Description   
-Межсистемный двунаправленный gRPC-обмен зашифрованными и сжатыми данными. Отправка метрик в Prometheus - Grafana.  
+Межсистемный двунаправленный gRPC-обмен зашифрованными и сжатыми данными. Запись данных в СУБД ClickHouse. Отправка метрик в Prometheus - Grafana.  
 Intersystem bidirectional gRPC exchange of encrypted and compressed data  
 ![bidirectional-grpc](https://github.com/blablatov/scada-bidirectional-grpc-cloud/raw/master/bidirectional-grpc.jpg "bidirectional-grpc")        
 
@@ -37,7 +37,7 @@ Testing remote functions without using network. Using buffer. Bench-test
 go test .
 ```   
 ```
-go test -bench .
+go test -bench=.
 ```   
 
 
@@ -57,7 +57,7 @@ Conventional test that starts a gRPC client test the service with RPC. Before hi
 go test .  
 ```     
 ```
-go test -bench .
+go test -bench=.
 ```    
 
 
@@ -111,11 +111,17 @@ graph TB
   SubGraph3Flow(Dashboards-Graph)
   end
 
+  subgraph "СУБД ClickHouse"
+  SubGraph4Flow(Tables-of-Data)
+  end
+
   subgraph "GRPC-client"
   Node1[Module `grpc-client-io`] -- GRPC-channel_HTTP/2 <--> SubGraph1Flow
   Node1[Module `grpc-client-io`] --> Local-Prometheus-server-9094[Local Prometheus server :9094] -- metrics --> SubGraph2Flow
   Local-Prometheus-server-9092[Local Prometheus server :9092] -- metrics --> SubGraph2Flow
   SubGraph2Flow[Dashboards-Graph] -- metrics --> SubGraph3Flow
+  SubGraph1Flow(Module `grpc-service-cloud`) -- HTTP-Methods/SQL --> SubGraph4Flow
 end
-```  
+```    
+ 
 
