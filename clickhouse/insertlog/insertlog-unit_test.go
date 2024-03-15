@@ -1,4 +1,4 @@
-// Полное тестирование insert, с выполнением запроса
+// Тестирование insert, без выполнения запроса
 // go test -v .
 
 package insertlog
@@ -10,21 +10,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 	"testing"
-	"time"
 )
 
-// Структура тестового запроса. For test
 var (
-	sid       = fmt.Sprint(103)
-	fm        = strconv.FormatFloat(49.7, 'g', -1, 64)
-	fs        = strings.ReplaceAll(fm, ".", ",")
-	insertLog = `INSERT INTO grpcdb.grpc_log (id, sensor, description, destination, measurement, timestamp) VALUES (` + sid + `, 'Dallas", "Texas Instruments', 'sensor#99', 'Surgut, City', ` + fs + `)`
+	insLog = "SELECT version()"
 )
 
-func TestInsertLog(t *testing.T) {
+func TestInsertLogUnit(t *testing.T) {
 
 	log.SetPrefix("Insert-test event: ")
 	log.SetFlags(log.Lshortfile)
@@ -52,29 +45,40 @@ func TestInsertLog(t *testing.T) {
 		},
 	}
 
+	if conn != nil {
+		t.Log("Cert get failed")
+	}
+
 	// Форматирование запроса
 	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("https://%s:8443/", DB_HOST), nil)
 	query := req.URL.Query()
 	query.Add("database", DB_NAME)
-	query.Add("query", insertLog)
-
-	log.Println(insertLog)
+	query.Add("query", insLog)
 
 	req.URL.RawQuery = query.Encode()
 
 	req.Header.Add("X-ClickHouse-User", DB_USER)
 	req.Header.Add("X-ClickHouse-Key", DB_PASS)
 
-	start := time.Now()
-	// Выполнение запроса. Run request
-	resp, err := conn.Do(req)
-	if err != nil {
-		t.Fatal(err)
+	// Имитация запроса. Imitation of request
+	// Сохранение и восстановление исходного значения respDo, с последующим восстановлением
+	saved := respDo
+	defer func() { respDo = saved }()
+
+	var reqs *http.Request
+	var method, url string
+	Do := func(reqs *http.Request) error {
+		method = "POST"
+		url = "http://any"
+
+		if method == "" && url == "" {
+			t.Fatal("request is empty")
+		}
+		return nil
 	}
 
-	// Отложеное выполнение закрытия запроса, до получения ответа
-	defer resp.Body.Close()
-
-	secs := time.Since(start).Seconds()
-	t.Logf("%.2fs Time of request\n", secs)
+	err = Do(reqs)
+	if err != nil {
+		t.Log(err)
+	}
 }

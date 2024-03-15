@@ -29,7 +29,23 @@ type InsData struct {
 // Файл сертификата
 var (
 	crtFile = filepath.Join("..", "certs", "YandexInternalRootCA.crt")
+	req     *http.Request
+	conn    *http.Client
 )
+
+// Для тестирования без отправки, логика запроса хранится в отдельной функции,
+// в неэкспортируемой переменной уровня пакета. For later the test
+var respDo = func(req *http.Request) error {
+	resp, err := conn.Do(req)
+	if err != nil {
+		log.Println(err)
+		return err
+	} else {
+		log.Println("Data inserted status: ", resp.Status)
+	}
+	defer resp.Body.Close()
+	return nil
+}
 
 func (d *InsData) InsertLog(wg sync.WaitGroup, chs chan string, chm chan float64, chi chan bool) error {
 
@@ -57,7 +73,7 @@ func (d *InsData) InsertLog(wg sync.WaitGroup, chs chan string, chm chan float64
 
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
-	conn := &http.Client{
+	conn = &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				RootCAs: caCertPool,
@@ -66,7 +82,7 @@ func (d *InsData) InsertLog(wg sync.WaitGroup, chs chan string, chm chan float64
 	}
 
 	// Форматирование запроса
-	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("https://%s:8443/", DB_HOST), nil)
+	req, _ = http.NewRequest(http.MethodPost, fmt.Sprintf("https://%s:8443/", DB_HOST), nil)
 	query := req.URL.Query()
 	query.Add("database", DB_NAME)
 	query.Add("query", insLog)
@@ -78,17 +94,10 @@ func (d *InsData) InsertLog(wg sync.WaitGroup, chs chan string, chm chan float64
 
 	start := time.Now()
 	// Выполнение запроса. Run request
-	resp, err := conn.Do(req)
-	if err != nil {
-		log.Println(err)
-		return err
-	} else {
-		log.Println("Data inserted status: ", resp.Status)
-	}
+	respDo(req)
+
 	secs := time.Since(start).Seconds()
 	fmt.Printf("%.2fs Time of request\n", secs)
-
-	defer resp.Body.Close()
 
 	return nil
 }

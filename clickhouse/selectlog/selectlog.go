@@ -47,9 +47,8 @@ func (c *CheckId) SelectLog(wg sync.WaitGroup, chs chan string, chm chan float64
 	// Формирование метаданных запроса. Struct of request
 	caCert, err := ioutil.ReadFile("YandexInternalRootCA.crt")
 	if err != nil {
-		p := recover()
-		log.Fatalln(err)
-		panic(p)
+		log.Println(err)
+		return err
 	}
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)

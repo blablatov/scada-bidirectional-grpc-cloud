@@ -67,10 +67,7 @@ func TestSelectLog(t *testing.T) {
 	// Чтение сертификата из файла. Формирование метаданных запроса
 	caCert, err := ioutil.ReadFile("YandexInternalRootCA.crt")
 	if err != nil {
-		// Восстанавливается для анализа, после вывода err, завершается
-		p := recover()
-		log.Fatalln(err)
-		panic(p)
+		t.Log(err)
 	}
 
 	caCertPool := x509.NewCertPool()
@@ -97,10 +94,7 @@ func TestSelectLog(t *testing.T) {
 	// Выполнение запроса
 	resp, err := conn.Do(req)
 	if err != nil {
-		// Восстанавливается для анализа, после вывода err, завершается
-		p := recover()
-		log.Fatalln(err)
-		panic(p)
+		t.Fatal(err)
 	}
 
 	// Отложеное выполнение закрытия запроса, до выполнения метода и получения ответа

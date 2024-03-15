@@ -108,7 +108,7 @@ func (s *mserver) ProcessCloud(stream pb.CloudExchange_ProcessCloudServer) error
 			}
 
 			// Вызов метода выполнения запроса insert к СУБД ClickHouse
-			chs := make(chan string, 1)
+			chs := make(chan string, len(reqId.Id))
 			chm := make(chan float64, 1)
 			chi := make(chan bool, 1)
 
@@ -140,7 +140,7 @@ func (s *mserver) ProcessCloud(stream pb.CloudExchange_ProcessCloudServer) error
 			}()
 
 			// // Вызов метода выполнения запроса select к СУБД ClickHouse
-			// chs := make(chan string, 1)
+			// chs := make(chan string, len(reqId.Id))
 			// chf := make(chan float64, 1)
 
 			// wg.Add(1)
