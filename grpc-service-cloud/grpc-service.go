@@ -17,6 +17,7 @@ import (
 	"time"
 
 	pb "github.com/blablatov/scada-bidirectional-grpc-cloud/grpc-cloud-proto"
+	tr "github.com/blablatov/scada-bidirectional-grpc-cloud/tracer-jaeger"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus"
@@ -48,9 +49,16 @@ const (
 	reqBatchSize = 1 // Group of orders. Заказы обрабатываются группами.
 )
 
+// Registering metrics to registry
 // Регистрируем стандартные серверные метрики и добавленный сборщик в реестре
 func init() {
 	reg.MustRegister(grpcMetrics, customMetricCounter)
+}
+
+// Calls the tracker function, registers to tracer
+// Вызываем функцию трасера, инициализируем Jaeger, регистрируем его в трассировщике
+func init() {
+	tr.InitTracer()
 }
 
 func main() {
@@ -139,6 +147,7 @@ func main() {
 	}
 }
 
+// Data for test. Данные для тестирования запросов
 func initIOData() {
 	reqMap["102"] = pb.RequestIO{Id: "102", Sensors: []string{"Dallas", "Texas Instruments"}, Description: "sensor#99", Destination: "Surgut, City", Measurement: 55}
 	reqMap["103"] = pb.RequestIO{Id: "103", Sensors: []string{"Dallas semiconductor", "Texas Instruments"}, Description: "sensor#77", Destination: "Samara, City", Measurement: 22}

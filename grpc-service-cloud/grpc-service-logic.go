@@ -9,6 +9,7 @@ import (
 	"log"
 	"sync"
 
+	"go.opencensus.io/trace"
 	//sl "github.com/blablatov/scada-bidirectional-grpc-cloud/clickhouse/selectlog"
 	in "github.com/blablatov/scada-bidirectional-grpc-cloud/clickhouse/insertlog"
 	pb "github.com/blablatov/scada-bidirectional-grpc-cloud/grpc-cloud-proto"
@@ -19,7 +20,7 @@ import (
 
 var reqMap = make(map[string]pb.RequestIO)
 
-// mСервер реализует order_management
+// mServer реализует grpc-cloud
 type mserver struct {
 	reqMap map[string]*pb.RequestIO
 }
@@ -48,11 +49,18 @@ func (s *mserver) ProcessCloud(stream pb.CloudExchange_ProcessCloudServer) error
 			reqId, err := stream.Recv() // Reads data from the in stream. Читает данные из входящего потока
 			log.Printf("Reading Proc order : %s", reqId)
 
+			// Adds a new metric with counter
 			// Добавление новой метрики с помощью созданного счетчика
 			customMetricCounter.WithLabelValues(reqId.Id).Inc()
 			customMetricCounter.WithLabelValues(reqId.Sensor).Inc()
 			customMetricCounter.WithLabelValues(reqId.Description).Inc()
 			customMetricCounter.WithLabelValues(reqId.Destination).Inc()
+
+			// Начинаем новый интервал трасера, указывая его имя и контекст
+			// Starts a new interval tracer sets name and context
+			_, span := trace.StartSpan(stream.Context(), "cloudservice.ProcessCloud")
+
+			defer span.End() // At the end, close. По окончании завершаем интервал
 
 			if reqId == nil {
 				return err
@@ -130,13 +138,12 @@ func (s *mserver) ProcessCloud(stream pb.CloudExchange_ProcessCloudServer) error
 					log.Printf("Error connect to dBase: %v", err)
 					return err
 				}
-				log.Printf("Id inserted[%s]: %v", <-chs, <-chi)
+				log.Printf("Id inserted[%s]: %v", <-chs)
 				return nil
 			}()
 			go func() {
 				wg.Wait()
 				close(chs)
-				close(chi)
 			}()
 
 			// // Вызов метода выполнения запроса select к СУБД ClickHouse
@@ -189,7 +196,8 @@ func (s *mserver) ProcessCloud(stream pb.CloudExchange_ProcessCloudServer) error
 				for _, comb := range statusMap {
 					// Group of orders. Передаем клиенту партию объединенных заказов
 					log.Printf("Shipping : %v -> %v", comb.Id, len(comb.IOList))
-					if err := stream.Send(&comb); err != nil { // Writes group of orders. Запись объединенных заказов в поток
+					// Writes group of orders. Запись объединенных заказов в поток
+					if err := stream.Send(&comb); err != nil {
 						return err
 					}
 				}
@@ -198,6 +206,7 @@ func (s *mserver) ProcessCloud(stream pb.CloudExchange_ProcessCloudServer) error
 			} else {
 				batchMarker++
 			}
+			<-chi
 		}
 	}
 }

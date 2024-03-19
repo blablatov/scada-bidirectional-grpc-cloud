@@ -80,7 +80,7 @@ func TestProcessCloud(t *testing.T) {
 
 	client := pb.NewCloudExchangeClient(conn)
 
-	// Finding of Duration. Тестированием определить оптимальное значение для крайнего срока кпд
+	// Finding of Duration. Тестированием определить оптимальное значение крайнего срока
 	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	clientDeadline := time.Now().Add(time.Duration(5000 * time.Millisecond))
 	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
@@ -195,7 +195,7 @@ func BenchmarkProcessCloud(b *testing.B) {
 		client := pb.NewCloudExchangeClient(conn)
 
 		// Finding of Duration. Тестированием определить оптимальное значение для крайнего срока кпд
-		clientDeadline := time.Now().Add(time.Duration(2000 * time.Millisecond))
+		clientDeadline := time.Now().Add(time.Duration(5000 * time.Millisecond))
 		ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
 
 		defer cancel()
