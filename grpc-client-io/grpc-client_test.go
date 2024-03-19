@@ -130,8 +130,6 @@ func TestProcessCloud(t *testing.T) {
 	if err := streamCloud.CloseSend(); err != nil {
 		log.Fatal(err)
 	}
-
-	chs <- struct{}{}
 }
 
 // Тестирование производительности в цикле за указанное колличество итераций
@@ -151,7 +149,7 @@ func BenchmarkProcessCloud(b *testing.B) {
 	}()
 
 	b.ReportAllocs()
-	for i := 0; i < 550; i++ {
+	for i := 0; i < 850; i++ {
 		tokau := oauth.NewOauthAccess(fetchToken())
 
 		// Load the client certificates from disk
@@ -229,7 +227,12 @@ func BenchmarkProcessCloud(b *testing.B) {
 
 		chs := make(chan struct{}) // Создаем канал для горутин (create chanel for goroutines)
 		// Вызываем функцию с помощью горутин, распараллеливаем чтение сообщений, возвращаемых сервисом
-		go asncClientBidirectionalRPC(streamCloud, chs)
+		go func() {
+			asncClientBidirectionalRPC(streamCloud, chs)
+			chs <- struct{}{}
+			close(chs)
+		}()
+
 		time.Sleep(time.Millisecond * 1000) // Имитируем задержку при отправке сервису сообщений. Wait time
 
 		// Сигнализируем о завершении клиентского потока (с ID заказов)
@@ -241,8 +244,6 @@ func BenchmarkProcessCloud(b *testing.B) {
 		// Cancelling the RPC. Отмена удаленного вызова gRPC на клиентской стороне
 		//cancel()
 		log.Printf("RPC Status : %v", ctx.Err()) // Status of context. Состояние текущего контекста
-
-		chs <- struct{}{}
 	}
 }
 

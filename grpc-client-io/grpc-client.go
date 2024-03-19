@@ -177,8 +177,6 @@ func main() {
 	// Cancelling the RPC. Отмена удаленного вызова gRPC на клиентской стороне
 	cancel()
 	log.Printf("RPC Status : %v", ctx.Err()) // Status of context. Состояние текущего контекста
-
-	<-chs
 }
 
 func asncClientBidirectionalRPC(streamCloud pb.CloudExchange_ProcessCloudClient, c chan struct{}) {
