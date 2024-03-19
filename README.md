@@ -1,13 +1,14 @@
 [![Go](https://github.com/blablatov/scada-bidirectional-grpc-cloud/actions/workflows/scada-bidirectional-grpc-cloud.yml/badge.svg)](https://github.com/blablatov/scada-bidirectional-grpc-cloud/actions/workflows/scada-bidirectional-grpc-cloud.yml) 
 
 ## Содержание
-- [Описание](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Описание-Description)
+- [Описание]- [Описание](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Описание-Description)
 - [Сборка, тестирование сервиса](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Сборка-запуск-и-тестирование-gRPC-сервиса-Building-running-testing-gRPC-service)
 - [Сборка, тестирование клиента](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Сборка-запуск-и-тестирование-gRPC-клиента-Building-running-testing-gRPC-client)
 - [Генерация серверного и клиентского кода](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Генерация-серверного-и-клиентского-кода-с-IDL-Protocol-Buffers-Generate-via-IDL-of-Protocol-Buffers-Server-side-and-Client-side-code)
-- [Отправка метрик в Prometheus, визуализация в Grafana](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Отправка-метрик-сервера-в-Prometheus-визуализация-в-Grafana-Sends-the-metrics-to-Prometheus-and-Grafana)  
-- [Трассировка и визуализация в Jaeger](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Трассировка-методов-gRPC-сервиса-и-клиента,-визуализация-данных-на-сервере-Jaeger-Tracking-with-Jaeger)  
+- [Отправка метрик в Prometheus, визуализация в Grafana](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Отправка-метрик-в-Prometheus-визуализация-в-Grafana-Sends-the-metrics-to-Prometheus-and-Grafana)  
+- [Трассировка и визуализация в Jaeger](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Трассировка-методов-gRPC-сервиса-и-клиента-визуализация-данных-в-Jaeger-Tracking-with-Jaeger)  
 - [Блок-схема обмена данными](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Блок-схема-обмена-данными-Block-diagram-of-work)
+
 
 
 
