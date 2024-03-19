@@ -1,7 +1,7 @@
 [![Go](https://github.com/blablatov/scada-bidirectional-grpc-cloud/actions/workflows/scada-bidirectional-grpc-cloud.yml/badge.svg)](https://github.com/blablatov/scada-bidirectional-grpc-cloud/actions/workflows/scada-bidirectional-grpc-cloud.yml) 
 
 ## Содержание
-- [Описание]- [Описание](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Описание-Description)
+- [Описание](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Описание-Description)
 - [Сборка, тестирование сервиса](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Сборка-запуск-и-тестирование-gRPC-сервиса-Building-running-testing-gRPC-service)
 - [Сборка, тестирование клиента](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Сборка-запуск-и-тестирование-gRPC-клиента-Building-running-testing-gRPC-client)
 - [Генерация серверного и клиентского кода](https://github.com/blablatov/scada-bidirectional-grpc-cloud/blob/master/README.md#Генерация-серверного-и-клиентского-кода-с-IDL-Protocol-Buffers-Generate-via-IDL-of-Protocol-Buffers-Server-side-and-Client-side-code)
